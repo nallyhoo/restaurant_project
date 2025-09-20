@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVB Restaurant - Online Food Ordering</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .cart-bounce { animation: bounce 0.3s ease-in-out; }
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }   
+            50% { transform: scale(1.1); }
+        }
+        .nav-link {
+            color: #FF8C00 !important;
+            
+            
+        }
+    
+        .nav-link:hover {
+            color: #000 !important; 
+            text-shadow: 2px 2px 4px #000000;/* even darker on hover */
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Wrapper with background -->
+    <div class="relative bg-cover bg-center bg-no-repeat text-white"
+        style="background-image: linear-gradient(rgba(15, 23, 43, .9), rgba(15, 23, 43, .9)),url('static/img/bg-hero.jpg');">
+        
+        <!-- Header -->
+        <header class="sticky top-0 z-50 bg-transparent">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center py-4">
+                    <div class="flex items-center space-x-2">
+                        <div class="text-3xl"><a href="index.html">☕️</div>
+                        <h1 class="text-2xl font-bold text-orange-400">SVB Restaurant</h1></a>
+                    </div>
+                    <a href="index.html" class="nav-item nav-link active">Home</a>
+                    <a href="service.html" class="nav-item nav-link">Service</a>
+                    <a href="menu.html" class="nav-item nav-link">Menu</a>
+                    <a href="signin.html" class="nav-item nav-link">Login</a>
+                    <button id="cartBtn" class="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-full flex items-center space-x-2 transition-colors">
+                        <span>🛒</span>
+                        <span>Cart (<span id="cartCount">0</span>)</span>
+                    </button>
+                </div>
+            </div>
+            
+        </header>
+
+        <!-- Hero Section -->
+        <section class="py-32 text-center">
+            <div class="max-w-7xl mx-auto px-4 relative z-10">
+                <h2 class="text-5xl font-bold mb-4 drop-shadow-lg">Fresh Food, Fast Delivery</h2>
+                <p class="text-xl mb-8 drop-shadow-md">Order your favorite meals and get them delivered hot to your door!</p>
+                <button onclick="document.getElementById('menu').scrollIntoView({behavior: 'smooth'})"
+                        class="bg-gray-200 text-orange-500 px-8 py-3 rounded-full font-semibold hover:bg-gray-300 transition-colors shadow-lg">
+                    Order Now
+                </button>
+            </div>
+        </section>
+    </div>
+
+
+    <!-- Menu Section -->
+    <section id="menu" class="py-10">
+        <div class="max-w-7xl mx-auto px-4">
+        
+
+            <!-- Category Tabs -->
+            <div class="flex justify-center mb-8 space-x-4">
+                <button onclick="showCategory('all', this)" class="category-btn bg-orange-500 text-white px-6 py-2 rounded-full font-medium">All</button>
+                <button onclick="showCategory('drink', this)" class="category-btn bg-gray-200 text-gray-700 px-6 py-2 rounded-full font-medium hover:bg-gray-300">Drink</button>
+                <button onclick="showCategory('breakfast', this)" class="category-btn bg-gray-200 text-gray-700 px-6 py-2 rounded-full font-medium hover:bg-gray-300">Breakfast</button>
+                <button onclick="showCategory('lunch', this)" class="category-btn bg-gray-200 text-gray-700 px-6 py-2 rounded-full font-medium hover:bg-gray-300">Lunch</button>
+                <button onclick="showCategory('dinner', this)" class="category-btn bg-gray-200 text-gray-700 px-6 py-2 rounded-full font-medium hover:bg-gray-300">Dinner</button>
+            </div>
+
+            <!-- Menu Items -->
+            <div id="menuItems" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Menu items will be populated by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+<!-- Cart Modal -->
+
+    <div id="cartModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50" >
+        <div class="flex items-center justify-center min-h-screen p-4" >
+            <div class="bg-white rounded-lg max-w-2xl w-full max-h-96 overflow-y-auto">
+                <div class="p-6" >
+                   
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-2xl font-bold">Your Cart</h3>
+                        <button id="closeCart" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+                    </div>
+                    <div id="cartItems" name ='Item_Order'class="space-y-4 mb-6">
+                        <!-- Cart items will be populated here -->
+                    </div>
+                    <div class="border-t pt-4">
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="text-xl font-bold">Total: <span id="cartTotal" name="Totalprice_Order">0.00</span>Riel</span>
+                        </div>
+                        <button id="checkoutBtn" class="w-full bg-green-500 hover:bg-green-600 text-white py-3 rounded-lg font-semibold transition-colors">
+                            Proceed to Checkout
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- Checkout Modal -->
+    <div id="checkoutModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg max-w-md w-full">
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-2xl font-bold">Order Details</h3>
+                        <button id="closeCheckout" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+                    </div>
+                    <form id="orderForm" method='POST' class="space-y-4">
+                        {% csrf_token %}
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                            <input type="text" name='Fullname_Order' required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                            <input type="tel" name='phone_numberOrder' required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Delivery Address</label>
+                            <textarea name='Address_Order' required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500" rows="3"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Special Instructions</label>
+                            <textarea name='Special_Order' class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500" rows="2" placeholder="Optional"></textarea>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-md">
+                            <div class="flex justify-between items-center">
+                                <span class="font-semibold">Order Total:</span>
+                                <span class="text-xl font-bold text-green-600">Riel<span id="checkoutTotal">0.00</span></span>
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-lg font-semibold transition-colors">
+                            Place Order
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg max-w-md w-full text-center p-8">
+                <div class="text-6xl mb-4">✅</div>
+                <h3 class="text-2xl font-bold mb-4 text-green-600">Order Placed Successfully!</h3>
+                <p class="text-gray-600 mb-6">Thank you for your order! We'll prepare your food and deliver it within 30-45 minutes.</p>
+                <p class="text-sm text-gray-500 mb-6">Order ID: #<span id="orderId"></span></p>
+                <button id="closeSuccess" class="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-lg font-semibold">
+                    Continue Shopping
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Message (shown when order is placed) -->
+    {% if success %}
+    <div id="successMessage" class="fixed top-4 right-4 bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg z-50">
+        <div class="flex items-center">
+            <span class="text-2xl mr-3">✅</span>
+            <div>
+                <p class="font-semibold">{{ message }}</p>
+                <p class="text-sm opacity-90">Your order has been saved to the database!</p>
+            </div>
+            <button onclick="document.getElementById('successMessage').remove()" class="ml-4 text-white hover:text-gray-200">
+                <span class="text-xl">&times;</span>
+            </button>
+        </div>
+    </div>
+    {% endif %}
+
+<script>
+        // Menu data
+        const menuData = [
+            {% for product in products %}
+            { id: {{ product.id }}, 
+            name: "{{ product.name }}", 
+            category: "{{ product.category.name|lower }}", 
+            price: {{ product.price }},
+            image: "{{ product.image.url }}", 
+            description: "{{ product.description|default:'' }}" }{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        ];
+
+        let cart = [];
+        let currentCategory = 'all';
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            displayMenuItems();
+            updateCartDisplay();
+        });
+
+        // Display menu items
+        function displayMenuItems() {
+            const menuContainer = document.getElementById('menuItems');
+            const filteredItems = currentCategory === 'all' ? menuData : menuData.filter(item => item.category === currentCategory);
+
+            menuContainer.innerHTML = filteredItems.map(item => `
+                <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+                    <img class="p-6">
+                    
+                        <img src="${item.image}" alt="${item.name}" class="w-40 h-40 object-cover mx-auto rounded-lg">
+                        
+                        
+                        <h3 class="text-xl text-center font-semibold mb-2">${item.name}</h3>
+                        <p class="text-gray-600 mb-4">${item.description}</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-2xl font-bold text-orange-500">${item.price} Riel</span>
+                            <button onclick="addToCart(${item.id})" class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </img>
+                </div>
+            `).join('');
+        }
+
+        // Show category
+        function showCategory(category, btn) {
+            currentCategory = category;
+            displayMenuItems();
+
+            // Update active button
+            document.querySelectorAll('.category-btn').forEach(button => {
+                button.classList.remove('bg-orange-500', 'text-white');
+                button.classList.add('bg-gray-200', 'text-gray-700');
+            });
+            btn.classList.remove('bg-gray-200', 'text-gray-700');
+            btn.classList.add('bg-orange-500', 'text-white');
+        }
+
+        // Add to cart
+        function addToCart(itemId) {
+            const item = menuData.find(item => item.id === itemId);
+            const existingItem = cart.find(cartItem => cartItem.id === itemId);
+
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({ ...item, quantity: 1 });
+            }
+
+            updateCartDisplay();
+
+            // Add bounce animation to cart button
+            const cartBtn = document.getElementById('cartBtn');
+            cartBtn.classList.add('cart-bounce');
+            setTimeout(() => cartBtn.classList.remove('cart-bounce'), 300);
+        }
+
+// Update cart display
+        function updateCartDisplay() {
+            const cartCount = document.getElementById('cartCount');
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            cartCount.textContent = totalItems;
+        }
+
+        // Show cart modal
+        document.getElementById('cartBtn').addEventListener('click', function() {
+            displayCartItems();
+            document.getElementById('cartModal').classList.remove('hidden');
+        });
+
+        // Display cart items
+        function displayCartItems() {
+            const cartItemsContainer = document.getElementById('cartItems');
+            const cartTotal = document.getElementById('cartTotal');
+
+            if (cart.length === 0) {
+                cartItemsContainer.innerHTML = '<p class="text-gray-500 text-center py-8">Your cart is empty</p>';
+                cartTotal.textContent = '0.00';
+                return;
+            }
+
+            cartItemsContainer.innerHTML = cart.map(item => `
+                <div class="flex justify-between items-center bg-gray-50 p-4 rounded-lg">
+                    <div class="flex items-center space-x-3">
+                        <img src="${item.image}" alt="${item.name}" class="w-32 h-32 object-cover mx-auto rounded-lg">
+                        <div>
+                            <h4 class="font-medium">${item.name}</h4>
+                            <p class="text-sm text-gray-600">$${item.price} each</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <button onclick="updateQuantity(${item.id}, -1)" class="bg-gray-200 hover:bg-gray-300 w-8 h-8 rounded-full flex items-center justify-center">-</button>
+                        <span class="font-medium">${item.quantity}</span>
+                        <button onclick="updateQuantity(${item.id}, 1)" class="bg-gray-200 hover:bg-gray-300 w-8 h-8 rounded-full flex items-center justify-center">+</button>
+                        <button onclick="removeFromCart(${item.id})" class="text-red-500 hover:text-red-700 ml-2">🗑️</button>
+                    </div>
+                </div>
+            `).join('');
+
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            cartTotal.textContent = total.toFixed(2);
+        }
+
+        // Update quantity
+        function updateQuantity(itemId, change) {
+            const item = cart.find(cartItem => cartItem.id === itemId);
+            if (item) {
+                item.quantity += change;
+                if (item.quantity <= 0) {
+                    removeFromCart(itemId);
+                } else {
+                    displayCartItems();
+                    updateCartDisplay();
+                }
+            }
+        }
+
+        // Remove from cart
+        function removeFromCart(itemId) {
+            cart = cart.filter(item => item.id !== itemId);
+            displayCartItems();
+            updateCartDisplay();
+        }
+
+        // Close cart modal
+        document.getElementById('closeCart').addEventListener('click', function() {
+            document.getElementById('cartModal').classList.add('hidden');
+        });
+
+        // Proceed to checkout
+        document.getElementById('checkoutBtn').addEventListener('click', function() {
+            if (cart.length === 0) {
+                alert('Your cart is empty! Please add some items before checkout.');
+                return;
+            }
+
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            document.getElementById('checkoutTotal').textContent = total.toFixed(2);
+            document.getElementById('cartModal').classList.add('hidden');
+            document.getElementById('checkoutModal').classList.remove('hidden');
+        });
+
+        // Close checkout modal
+        document.getElementById('closeCheckout').addEventListener('click', function() {
+            document.getElementById('checkoutModal').classList.add('hidden');
+        });
+
+// Handle order form submission
+        document.getElementById('orderForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Get form data
+            const formData = new FormData(this);
+            formData.append('cart_data', JSON.stringify(cart));
+
+            // Show loading state
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Processing...';
+            submitBtn.disabled = true;
+
+            // Send AJAX request
+            fetch(this.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                }
+            })
+            .then(response => response.text())
+            .then(html => {
+                // Check if the response contains success message
+                if (html.includes('Order placed successfully')) {
+                    // Clear cart
+                    cart = [];
+                    updateCartDisplay();
+
+                    // Show success modal
+                    document.getElementById('checkoutModal').classList.add('hidden');
+                    document.getElementById('successModal').classList.remove('hidden');
+
+                    // Reset form
+                    this.reset();
+
+                    // Update success modal with order details
+                    const parser = new DOMParser();
+                    const newDoc = parser.parseFromString(html, 'text/html');
+                    const orderId = newDoc.querySelector('#orderId')?.textContent;
+                    if (orderId) {
+                        document.getElementById('orderId').textContent = orderId;
+                    }
+                } else {
+                    // Show error message
+                    alert('There was an error processing your order. Please try again.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('There was an error processing your order. Please try again.');
+            })
+            .finally(() => {
+                // Reset button state
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            });
+        });
+
+        // Close success modal
+        document.getElementById('closeSuccess').addEventListener('click', function() {
+            document.getElementById('successModal').classList.add('hidden');
+        });
+
+        // Auto-hide success message after 10 seconds
+        const successMessage = document.getElementById('successMessage');
+        if (successMessage) {
+            setTimeout(() => {
+                successMessage.remove();
+            }, 10000);
+        }
+
+        // Close modals when clicking outside
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('fixed')) {
+                e.target.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>

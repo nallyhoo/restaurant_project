@@ -1,0 +1,139 @@
+{% extends 'base_order.html' %}
+{% load static %}
+
+
+{% block content %}
+
+
+    
+
+    <!-- Header -->
+<div class="max-w-4xl mx-auto py-6">     
+
+
+
+    
+        <<br><br><br><br><br><br>
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-6 flex flex-col md:flex-row md:justify-between md:items-center">
+            
+            <div>
+                <h1 class="text-3xl font-bold text-gray-800 mb-2">📋 Customer Orders</h1>
+                <p class="text-gray-600">Today's orders from the menu</p>
+            </div>
+        
+            <div class="flex space-x-3 mt-4 md:mt-0">
+                <a href="list_booking.html" class="px-4 py-2 bg-gray-100 text-gray-800 rounded-full hover:bg-yellow-500 hover:text-white transition duration-300 font-medium shadow-sm">List of Booking</a>
+                <a href="shop.html" class="px-4 py-2 bg-gray-100 text-gray-800 rounded-full hover:bg-yellow-500 hover:text-white transition duration-300 font-medium shadow-sm">=>Menu</a>
+            </div>
+        </div>
+        
+        
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Order List -->
+    <div class="space-y-4" id="orderList">
+        {% for online_order in online_orders %}
+            <div class="bg-white rounded-lg shadow-md p-6 
+                {% if online_order.is_approved %}border-l-4 border-green-500{% else %}border-l-4 border-yellow-500{% endif %}">
+                
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800">Order ID #{{ online_order.id }}</h3>
+                        <p class="text-sm text-gray-500">Customer: {{ online_order.fullname }}</p>
+                        <p class="text-sm text-gray-500">Time: {{ online_order.created_at }}</p>
+                    </div>
+                    {% if online_order.is_approved %}
+                        <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">Completed</span>
+                    {% else %}
+                        <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-medium">Preparing</span>
+                    {% endif %}
+                </div>
+                
+                <div class="space-y-2 mb-4">
+                    <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                        <span class="text-gray-700">{{ online_order.product_name }}</span>
+                        <div class="text-right">
+                            <span class="text-sm text-gray-500">x{{ online_order.quantity_order }}</span>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center pt-2 border-t-2 border-gray-200">
+                        <span class="font-semibold text-gray-800">Total:</span>
+                        <span class="font-bold text-lg 
+                            {% if online_order.is_approved %}text-green-600{% else %}text-yellow-600{% endif %}">
+                            {{ online_order.total_price }} riel
+                        </span>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    
+
+        <!-- Order 3 -->
+        {% comment %} <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-500">
+            <div class="flex justify-between items-start mb-4">
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800">Order #003</h3>
+                    <p class="text-sm text-gray-500">Customer: Emma Davis</p>
+                    <p class="text-sm text-gray-500">Time: 1:45 PM</p>
+                </div>
+                <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">New Order</span>
+            </div>
+            
+            <div class="space-y-2 mb-4">
+                <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                    <span class="text-gray-700">🐟 Grilled Salmon</span>
+                    <div class="text-right">
+                        <span class="text-sm text-gray-500">x1</span>
+                        <span class="ml-2 font-medium">$26.00</span>
+                    </div>
+                </div>
+                <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                    <span class="text-gray-700">🥔 Mashed Potatoes</span>
+                    <div class="text-right">
+                        <span class="text-sm text-gray-500">x1</span>
+                        <span class="ml-2 font-medium">$8.00</span>
+                    </div>
+                </div>
+                <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                    <span class="text-gray-700">🍷 White Wine</span>
+                    <div class="text-right">
+                        <span class="text-sm text-gray-500">x1</span>
+                        <span class="ml-2 font-medium">$12.00</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex justify-between items-center pt-2 border-t-2 border-gray-200">
+                <span class="font-semibold text-gray-800">Total:</span>
+                <span class="font-bold text-lg text-blue-600">$46.00</span>
+            </div>
+        </div>
+    </div> {% endcomment %}
+
+    {% comment %} summary total {% endcomment %}
+    <div class="bg-white rounded-lg shadow-lg p-6 mt-6">
+        <h2 class="text-xl font-bold text-gray-800 mb-4">📊 Today's Summary</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- Total Orders -->
+            <div class="text-center p-4 bg-green-50 rounded-lg">
+                <div class="text-2xl font-bold text-green-600">{{ total_orders }}</div>
+                <div class="text-sm text-gray-600">Total Orders</div>
+            </div>
+
+            <!-- Total Revenue -->
+            <div class="text-center p-4 bg-blue-50 rounded-lg">
+                <div class="text-2xl font-bold text-blue-600">{{ total_revenue }} riel</div>
+                <div class="text-sm text-gray-600">Total Revenue</div>
+            </div>
+
+            <!-- Average Order -->
+            <div class="text-center p-4 bg-purple-50 rounded-lg">
+                <div class="text-2xl font-bold text-purple-600">{{ average_order|floatformat:2 }} riel</div>
+                <div class="text-sm text-gray-600">Average Order</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
