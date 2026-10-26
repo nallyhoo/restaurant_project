@@ -40,6 +40,7 @@
                     <div>
                         <h3 class="text-lg font-semibold text-gray-800">Order ID #{{ online_order.id }}</h3>
                         <p class="text-sm text-gray-500">Customer: {{ online_order.fullname }}</p>
+                        <p class="text-sm text-gray-500">phone number: {{ online_order.phone_number }}</p>
                         <p class="text-sm text-gray-500">Time: {{ online_order.created_at }}</p>
                     </div>
                     {% if online_order.is_approved %}

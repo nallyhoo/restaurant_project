@@ -39,7 +39,6 @@ urlpatterns = [
     path('cart.html',svb_restuarant.cart),
     path('order.html',svb_restuarant.Order),
     path('list_booking.html',svb_restuarant.Booking_list),
-    
-    
-    
+    path('add_product.html',svb_restuarant.Add1_product),
+    path('update_product/', svb_restuarant.update_product),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

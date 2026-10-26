@@ -97,6 +97,7 @@ class Booking(models.Model):
     quantity_peo = models.CharField(max_length=20)
     special_req = models.TextField(max_length=200)
     is_approved = models.BooleanField(default=False)
+    phone_number = models.CharField(max_length=100, default="", blank=True, null=True)
     
     
     def __str__(self):

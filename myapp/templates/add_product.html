@@ -1,0 +1,114 @@
+{% extends 'base_order.html' %}
+{% load static %}
+
+{% block content %}
+
+{% if message%}
+<script>
+    alert('{{message}}');
+</script>
+{% endif%}
+
+
+<script src="https://cdn.tailwindcss.com"></script>
+<!-- Header -->
+<div class="max-w-4xl mx-auto py-6">
+    <br><br><br><br><br><br>
+    <div class="bg-white rounded-lg shadow-lg p-6 mb-6 flex flex-col md:flex-row md:justify-between md:items-center">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">📋 Product Management</h1>
+            <p class="text-gray-600"></p>
+        </div>
+        <div class="flex space-x-3 mt-4 md:mt-0">
+            <button id="addProductBtn"
+                class="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-full flex items-center space-x-2 transition-colors">
+                <span>🛒</span>
+                <span>Add Product</span>
+            </button>
+            <a href="shop.html"
+                class="px-4 py-2 bg-gray-100 text-gray-800 rounded-full hover:bg-yellow-500 hover:text-white transition duration-300 font-medium shadow-sm">=>Menu</a>
+        </div>
+    </div>
+</div>
+
+<!-- Image Upload Modal -->
+<div id="uploadImageModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white rounded-lg max-w-md w-full p-6">
+            <h3 class="text-xl font-bold mb-4">Upload Product Image</h3>
+            <form method="POST" enctype="multipart/form-data" >
+                {% csrf_token %}
+                <input type="file" name="image_product" accept="image/*" required
+                    class="mb-4 w-full border border-gray-300 p-2 rounded-md">
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
+                    <input type="text" name='name_product' required
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                    <textarea name='desc_product' required
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+                        rows="3"></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Price</label>
+                    <input type="number" name='price_product' required
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500">
+                </div>
+                <div class="col-md-6 flex items-center justify-between mt-4">
+                    <div class="flex-1 mr-2">
+                        <div class="form-floating">
+                            <select class="form-select w-full" name='category_pro' id="select1">
+                                <option value="drink">drink</option>
+                                <option value="breakfast">breakfast</option>
+                                <option value="lunch">lunch</option>
+                                <option value="dinner">dinner</option>
+                            </select>
+                            <label for="select1">Category</label>
+                        </div>
+                    </div>
+                    <button type="button" id="cancelBtn"
+                        class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded-full font-medium transition-colors">
+                        Cancel
+                    </button>
+                </div>
+                
+                <button type="submit"
+                    class="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-lg font-semibold transition-colors">
+                    submit product
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Success Message -->
+<script>
+    // Get modal and button elements
+    const addProductBtn = document.getElementById('addProductBtn');
+    const uploadImageModal = document.getElementById('uploadImageModal');
+    const cancelBtn = document.getElementById('cancelBtn');
+
+    cancelBtn.addEventListener('click', () => {
+        uploadImageModal.classList.add('hidden');
+    });
+  
+    // Show modal when button is clicked
+    addProductBtn.addEventListener('click', () => {
+      uploadImageModal.classList.remove('hidden');
+    });
+  
+    // Close modal when clicking outside the modal content
+    uploadImageModal.addEventListener('click', (e) => {
+      if (e.target === uploadImageModal) {
+        uploadImageModal.classList.add('hidden');
+      }
+    });
+  </script>
+  
+
+{% endblock %}

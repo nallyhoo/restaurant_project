@@ -20,6 +20,53 @@
         </div>
         <!-- Modal Search End -->
 
+        <!-- Edit Product Modal Start -->
+        <div class="modal fade" id="editProductModal" tabindex="-1" aria-labelledby="editProductModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <form id="editProductForm">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="editProductModalLabel">Edit Product</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <input type="hidden" id="productId" name="productId" />
+                  <div class="mb-3">
+                    <label for="productName" class="form-label">Name</label>
+                    <input type="text" class="form-control" id="productName" name="name" required />
+                  </div>
+                  <div class="mb-3">
+                    <label for="productDescription" class="form-label">Description</label>
+                    <textarea class="form-control" id="productDescription" name="description" rows="3" required></textarea>
+                  </div>
+                  <div class="mb-3">
+                    <label for="productPrice" class="form-label">Price</label>
+                    <input type="number" class="form-control" id="productPrice" name="price" step="0.01" required />
+                  </div>
+                <div class="mb-3">
+                  <label for="productCategory" class="form-label">Category</label>
+                  <select class="form-select" id="productCategory" name="category" required>
+                    <option value="drink">Drink</option>
+                    <option value="breakfast">Breakfast</option>
+                    <option value="lunch">Lunch</option>
+                    <option value="dinner">Dinner</option>
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label for="productImage" class="form-label">Product Image</label>
+                  <input class="form-control" type="file" id="productImage" name="image" accept="image/*" />
+                </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <!-- Edit Product Modal End -->
+
 
         <!-- Single Page Header start -->
         <div class="container-xxl py-5 bg-dark page-header mb-5">
@@ -29,8 +76,8 @@
             <h1 class="text-center text-white display-6">Menu</h1>
             <ol class="breadcrumb justify-content-center mb-0">
                 <li class="breadcrumb-item"><a href="#">Home</a></li>
-                <li class="breadcrumb-item"><a href="#">Pages</a></li>
-                <li class="breadcrumb-item active text-white">Shop</li>
+                <li class="breadcrumb-item"><a href="add_product.html">Add Product to</a></li>
+                <li class="breadcrumb-item"> <a href = 'add_product.html'>  Product Management</a></li>
             </ol>
                     </div>
         </div>
@@ -60,7 +107,7 @@
                                         <option value="volvo">All</option>
                                         <option value="saab">Drink</option>
                                         <option value="saab">Breakfast</option>
-                                        <option value="opel">Lunch</option>
+                                        <option value="lunch">Lunch</option>
                                         <option value="audi">Dinner</option>
                                     </select>
                                 </div>
@@ -219,7 +266,7 @@
                                     {% for product in products%}
                                         {% if product.category|lower == 'drink'%}
                                     <div class="col-md-4 col-lg-3 col-xl-3">
-                                        <div class="rounded position-relative fruite-item">
+                                        <div class="rounded position-relative fruite-item product-item" data-id="{{ product.id }}" data-name="{{ product.name }}" data-description="{{ product.description }}" data-price="{{ product.price }}" data-category="{{ product.category|lower }}">
                                             <div class="fruite-img">
                                                 <img src="{{ product.image.url }}" class="img-fluid w-100 rounded-top" alt="">
                                             </div>
@@ -229,7 +276,7 @@
                                                     <p>{{ product.description }}</p>
                                                     <div class="d-flex justify-content-between flex-lg-wrap">
                                                         <p class="text-dark fs-5 fw-bold mb-0"> {{ product.price }}R</p>
-                                                        <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
+                                                        <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> instock</a>
                                                     </div>
                                                 </div>
                                             </div>                                 
@@ -244,7 +291,7 @@
                                             {% for product in products%}
                                             {% if product.category|lower == 'breakfast'%}
                                             <div class="col-md-6 col-lg-3 col-xl-3">
-                                                <div class="rounded position-relative fruite-item">
+                                                <div class="rounded position-relative fruite-item product-item" data-id="{{ product.id }}" data-name="{{ product.name }}" data-description="{{ product.description }}" data-price="{{ product.price }}" data-category="{{ product.category|lower }}">
                                                     <div class="fruite-img">
                                                         <img src="{{ product.image.url }}" class="img-fluid w-100 rounded-top" alt="">
                                                     </div>
@@ -254,12 +301,12 @@
                                                         <p>{{ product.description }}</p>
                                                         <div class="d-flex justify-content-between flex-lg-wrap">
                                                             <p class="text-dark fs-5 fw-bold mb-0"> {{ product.price }}R</p>
-                                                            <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
+                                                            <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> instock</a>
                                                         </div>
                                                     </div>
                                                 </div>                                 
                                             </div>
-                                                {% endif%}
+                                            {% endif%}
                                             {% endfor%}
 
 
@@ -269,7 +316,7 @@
                                                 {% for product in products %}
                                                 {% if product.category|lower == 'lunch' %}
                                                 <div class="col-md-6 col-lg-3 col-xl-3">
-                                                    <div class="rounded position-relative fruite-item">
+                                                    <div class="rounded position-relative fruite-item product-item" data-id="{{ product.id }}" data-name="{{ product.name }}" data-description="{{ product.description }}" data-price="{{ product.price }}" data-category="{{ product.category|lower }}">
                                                         <div class="fruite-img">
                                                             <img src="{{ product.image.url }}" class="img-fluid w-100 rounded-top" alt="">
                                                         </div>
@@ -281,7 +328,7 @@
                                                             <p>{{ product.description }}</p>
                                                             <div class="d-flex justify-content-between flex-lg-wrap">
                                                                 <p class="text-dark fs-5 fw-bold mb-0">{{ product.price }}R</p>
-                                                                <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
+                                                                <a href="#" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> instock</a>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -296,7 +343,7 @@
                                                 {% for product in products %}
                                                 {% if product.category|lower == 'dinner' %}
                                                 <div class="col-md-6 col-lg-3 col-xl-3">
-                                                    <div class="rounded position-relative fruite-item">
+                                                    <div class="rounded position-relative fruite-item product-item" data-id="{{ product.id }}" data-name="{{ product.name }}" data-description="{{ product.description }}" data-price="{{ product.price }}" data-category="{{ product.category|lower }}">
                                                         <div class="fruite-img">
                                                             <img src="{{ product.image.url }}" class="img-fluid w-100 rounded-top" alt="">
                                                         </div>
@@ -341,5 +388,75 @@
         </div>
         <!-- Fruits Shop End-->
 
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var editProductModal = new bootstrap.Modal(document.getElementById('editProductModal'));
+    var editProductForm = document.getElementById('editProductForm');
+
+    document.querySelectorAll('.product-item').forEach(function (item) {
+        item.addEventListener('click', function () {
+            var id = this.getAttribute('data-id');
+            var name = this.getAttribute('data-name');
+            var description = this.getAttribute('data-description');
+            var price = this.getAttribute('data-price');
+            var category = this.getAttribute('data-category');
+
+            document.getElementById('productId').value = id;
+            document.getElementById('productName').value = name;
+            document.getElementById('productDescription').value = description;
+            document.getElementById('productPrice').value = price;
+            document.getElementById('productCategory').value = category;
+
+            editProductModal.show();
+        });
+    });
+
+    editProductForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        var formData = new FormData(editProductForm);
+
+        fetch('/update_product/', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(data.message);
+                editProductModal.hide();
+                // Optionally, refresh the page or update the product list dynamically here
+                location.reload();
+            } else {
+                alert('Error: ' + data.message);
+            }
+        })
+        .catch(error => {
+            alert('An error occurred: ' + error);
+        });
+    });
+
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+});
+</script>
 
 {%endblock%}

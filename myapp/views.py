@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect
 from django.http import HttpResponse
-from .models import Product,Contact,Sign_up,Chef , Booking ,Online_order
+from .models import Product,Contact,Sign_up,Chef , Booking ,Online_order ,Categories
 from django.contrib.auth import authenticate, login
 from django.db.models import Sum
 
@@ -25,7 +25,8 @@ def about(request):
     return render(request,'about.html',{'chefs':Chefs})
 
 def service(request):
-    return render(request,'service.html')
+    chefs = Chef.objects.all()
+    return render(request,'service.html',{'chefs': chefs})
 
 
 
@@ -41,8 +42,8 @@ def booking(request):
         datetime = request.POST.get('date_time')
         people = request.POST.get('booking_people')
         req = request.POST.get('special_request')
-        
-        obj = Booking(name=name ,email=em , date =datetime ,quantity_peo=people ,special_req=req)
+        phone =request.POST.get('phone_num')
+        obj = Booking(name=name ,email=em , date =datetime ,quantity_peo=people ,special_req=req , phone_number=phone)
         obj.save()
         context['message']= f' hey {name} your booking will be approve soon!'
     return render(request,'booking.html',context)
@@ -192,3 +193,69 @@ def Booking_list(request):
     bookings = Booking.objects.all()
     return render(request,'list_booking.html',{'bookings':bookings})
 
+
+def Add1_product(request):
+    context={}
+    if request.method=="POST":
+        name = request.POST.get('name_product')
+        price_pro = request.POST.get('price_product')
+        desc = request.POST.get('desc_product')
+        img = request.FILES.get('image_product')
+        cate =request.POST.get('category_pro')
+        
+        try:
+            category_instance = Categories.objects.get(name__iexact=cate)
+        except Categories.DoesNotExist:
+            category_instance = None
+        
+        obj= Product(name = name,price=price_pro,description=desc ,image =img ,category=category_instance)
+        obj.save()
+        context['message']=f'Product {name} added successfully!'
+        
+    return render(request,'add_product.html',context)
+
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+
+@csrf_exempt
+def update_product(request):
+    if request.method == 'POST':
+        product_id = request.POST.get('productId')
+        name = request.POST.get('name')
+        description = request.POST.get('description')
+        price = request.POST.get('price')
+        category = request.POST.get('category')
+        image = request.FILES.get('image')
+
+        try:
+            product = Product.objects.get(id=product_id)
+            product.name = name
+            product.description = description
+            product.price = price
+            if category:
+                product.category = Categories.objects.get(id=category) if category.isdigit() else Categories.objects.get(name__iexact=category)
+            if image:
+                product.image = image
+            product.save()
+            return JsonResponse({'success': True, 'message': 'Product updated successfully.'})
+        except Product.DoesNotExist:
+            return JsonResponse({'success': False, 'message': 'Product not found.'})
+        except Categories.DoesNotExist:
+            return JsonResponse({'success': False, 'message': 'Category not found.'})
+    return JsonResponse({'success': False, 'message': 'Invalid request method.'})
+
+@csrf_exempt
+def delete_product(request):
+    import json
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            product_id = data.get('id')
+            product = Product.objects.get(id=product_id)
+            product.delete()
+            return JsonResponse({'success': True, 'message': 'Product deleted successfully.'})
+        except Product.DoesNotExist:
+            return JsonResponse({'success': False, 'message': 'Product not found.'})
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': str(e)})
+    return JsonResponse({'success': False, 'message': 'Invalid request method.'})
